@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashback Fun - Tip, Earn, Repeat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            background: #000;
+            color: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.4;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('background.png') center/cover;
+            opacity: 0.03;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 30px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: url('a.png') center/contain no-repeat;
+            opacity: 0.9;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .twitter-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .twitter-link:hover {
+            color: #fff;
+        }
+
+        .connect-wallet {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .connect-wallet:hover {
+            background: #e0e0e0;
+        }
+
+        .connect-wallet.connected {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #333;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: #0a0a0a;
+            margin-top: 40px;
+            border: 1px solid #0a0a0a;
+        }
+
+        .panel {
+            background: #000;
+            padding: 40px;
+        }
+
+        .panel-full {
+            grid-column: 1 / -1;
+        }
+
+        .panel-title {
+            font-size: 11px;
+            font-weight: 400;
+            margin-bottom: 30px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #0a0a0a;
+            padding-bottom: 15px;
+        }
+
+        .terminal-wrapper {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #1a1a1a;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-bottom-color: #333;
+        }
+
+        input::placeholder {
+            color: #333;
+        }
+
+        .tip-button {
+            width: 100%;
+            padding: 15px;
+            background: #fff;
+            color: #000;
+            border: none;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+            margin-top: 30px;
+        }
+
+        .tip-button:hover:not(:disabled) {
+            background: #e0e0e0;
+        }
+
+        .tip-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .transaction-log {
+            background: #0a0a0a;
+            padding: 20px;
+            font-size: 11px;
+            min-height: 120px;
+            border: 1px solid #0a0a0a;
+        }
+
+        .log-line {
+            color: #666;
+            margin: 8px 0;
+            font-family: inherit;
+        }
+
+        .timer-section {
+            border: 1px solid #0a0a0a;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .timer-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .timer-value {
+            font-size: 32px;
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: #0a0a0a;
+            border: 1px solid #0a0a0a;
+            margin-top: 30px;
+        }
+
+        .stat-cell {
+            background: #000;
+            padding: 20px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 400;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th {
+            text-align: left;
+            padding: 15px 0;
+            font-size: 10px;
+            color: #666;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #0a0a0a;
+        }
+
+        .leaderboard-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #0a0a0a;
+            font-size: 12px;
+            color: #e0e0e0;
+        }
+
+        .leaderboard-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .wallet-addr {
+            font-family: inherit;
+            color: #999;
+        }
+
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+
+        .activity-feed::-webkit-scrollbar {
+            width: 1px;
+        }
+
+        .activity-feed::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        .activity-feed::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+
+        .activity-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #0a0a0a;
+            color: #666;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-list li {
+            padding: 12px 0;
+            color: #999;
+            font-size: 12px;
+            line-height: 1.6;
+            border-bottom: 1px solid #0a0a0a;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .contract-link {
+            display: inline-block;
+            color: #666;
+            text-decoration: none;
+            margin-top: 30px;
+            padding: 10px 0;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .contract-link:hover {
+            color: #fff;
+            border-bottom-color: #333;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .terminal-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <div class="logo"></div>
+                <div class="brand">
+                    <h1>Cashback Fun</h1>
+                    <p class="subtitle">Tip, earn, repeat.</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <a href="https://x.com/CashbackFun" target="_blank" class="twitter-link">Twitter</a>
+                <button class="connect-wallet" id="connectBtn" onclick="toggleWallet()">
+                    Connect Wallet
+                </button>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Tipping Terminal -->
+            <div class="panel panel-full">
+                <h2 class="panel-title">Terminal</h2>
+                <div class="terminal-wrapper">
+                    <div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label>Amount</label>
+                                <input type="number" id="tipAmount" placeholder="0.05" step="0.01" min="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>Recipient</label>
+                                <input type="text" id="recipient" placeholder="Wallet address">
+                            </div>
+                        </div>
+                        <button class="tip-button" onclick="sendTip()">Execute</button>
+                        
+                        <div id="userStatsSection" style="display: none;">
+                            <div class="stats-grid">
+                                <div class="stat-cell">
+                                    <div class="stat-label">Total Tipped</div>
+                                    <div class="stat-value" id="userTipped">0.000</div>
+                                </div>
+                                <div class="stat-cell">
+                                    <div class="stat-label">Cashback</div>
+                                    <div class="stat-value" id="userCashback">0.000000</div>
+                                </div>
+                                <div class="stat-cell">
+                                    <div class="stat-label">Address</div>
+                                    <div class="stat-value" id="userWallet">—</div>
+                                </div>
+                                <div class="stat-cell">
+                                    <div class="stat-label">Rank</div>
+                                    <div class="stat-value" id="userRank">—</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="timer-section">
+                            <div class="timer-label">Next Round</div>
+                            <div class="timer-value" id="timer">05:00</div>
+                        </div>
+                        <div class="transaction-log" id="txLog">
+                            <div class="log-line">Standby.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Tippers -->
+            <div class="panel">
+                <h2 class="panel-title">Top Tippers</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">Rank</th>
+                            <th>Address</th>
+                            <th style="text-align: right;">Tipped</th>
+                            <th style="text-align: right;">Return</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topTippers">
+                        <tr><td colspan="4" style="text-align: center; color: #333;">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Most Generous -->
+            <div class="panel">
+                <h2 class="panel-title">Most Generous</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">Rank</th>
+                            <th>Address</th>
+                            <th style="text-align: right;">Ratio</th>
+                            <th style="text-align: right;">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mostGenerous">
+                        <tr><td colspan="4" style="text-align: center; color: #333;">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="panel">
+                <h2 class="panel-title">Protocol Feed</h2>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item" style="color: #333;">Monitoring...</div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="panel">
+                <h2 class="panel-title">Protocol</h2>
+                <ul class="info-list">
+                    <li>Every tip pays a small protocol fee.</li>
+                    <li>The contract instantly refunds a fraction as gas cashback.</li>
+                    <li>Activity is tracked publicly.</li>
+                    <li>The most generous earn visibility, not noise.</li>
+                </ul>
+                <a href="#" class="contract-link">View Contract →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isConnected = false;
+        let userAddress = '';
+        let userTotalTipped = 0;
+        let userTotalCashback = 0;
+        let nextRoundTime = 0;
+        let timerInterval;
+        
+        function init() {
+            const stored = localStorage.getItem('nextRoundTime');
+            const now = Date.now();
+            
+            if (stored && parseInt(stored) > now) {
+                nextRoundTime = parseInt(stored);
+            } else {
+                nextRoundTime = now + 5 * 60 * 1000;
+                localStorage.setItem('nextRoundTime', nextRoundTime.toString());
+            }
+            
+            startTimer();
+            generateLeaderboards();
+            startActivityFeed();
+        }
+
+        function toggleWallet() {
+            const btn = document.getElementById('connectBtn');
+            if (!isConnected) {
+                userAddress = '0x' + Array.from({length: 8}, () => 
+                    Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
+                isConnected = true;
+                btn.textContent = userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
+                btn.classList.add('connected');
+                document.getElementById('userStatsSection').style.display = 'block';
+                document.getElementById('userWallet').textContent = userAddress.slice(0, 8) + '...' + userAddress.slice(-6);
+            } else {
+                isConnected = false;
+                userAddress = '';
+                btn.textContent = 'Connect Wallet';
+                btn.classList.remove('connected');
+                document.getElementById('userStatsSection').style.display = 'none';
+            }
+        }
+
+        function sendTip() {
+            const amount = parseFloat(document.getElementById('tipAmount').value);
+            const recipient = document.getElementById('recipient').value;
+            const log = document.getElementById('txLog');
+            
+            if (!amount || amount <= 0) {
+                log.innerHTML = '<div class="log-line">Error: Invalid amount</div>';
+                return;
+            }
+            
+            if (!recipient) {
+                log.innerHTML = '<div class="log-line">Error: No recipient</div>';
+                return;
+            }
+            
+            if (!isConnected) {
+                log.innerHTML = '<div class="log-line">Error: Wallet not connected</div>';
+                return;
+            }
+            
+            log.innerHTML = '<div class="log-line">Processing...</div>';
+            
+            setTimeout(() => {
+                const cashback = (amount * (Math.random() * 0.02 + 0.01)).toFixed(6);
+                log.innerHTML = `
+                    <div class="log-line">Tip sent → ${amount.toFixed(3)}</div>
+                    <div class="log-line">Cashback → ${cashback}</div>
+                    <div class="log-line">Complete.</div>
+                `;
+                
+                userTotalTipped += amount;
+                userTotalCashback += parseFloat(cashback);
+                document.getElementById('userTipped').textContent = userTotalTipped.toFixed(3);
+                document.getElementById('userCashback').textContent = userTotalCashback.toFixed(6);
+                
+                const rank = Math.floor(Math.random() * 50) + 1;
+                document.getElementById('userRank').textContent = '#' + rank;
+                
+                addActivity(userAddress, amount, cashback);
+                
+                document.getElementById('tipAmount').value = '';
+                document.getElementById('recipient').value = '';
+            }, 1200);
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const now = Date.now();
+                const diff = nextRoundTime - now;
+                
+                if (diff <= 0) {
+                    const log = document.getElementById('txLog');
+                    log.innerHTML = `
+                        <div class="log-line">Round complete.</div>
+                        <div class="log-line">Balances updated.</div>
+                    `;
+                    
+                    nextRoundTime = now + 5 * 60 * 1000;
+                    localStorage.setItem('nextRoundTime', nextRoundTime.toString());
+                } else {
+                    const minutes = Math.floor(diff / 60000);
+                    const seconds = Math.floor((diff % 60000) / 1000);
+                    document.getElementById('timer').textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function generateWallet() {
+            return '0x' + Array.from({length: 8}, () => 
+                Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
+        }
+
+        function generateLeaderboards() {
+            const tippers = Array.from({length: 8}, () => ({
+                wallet: generateWallet(),
+                tipped: (Math.random() * 10 + 0.5).toFixed(3),
+                cashback: (Math.random() * 0.2 + 0.01).toFixed(6)
+            })).sort((a, b) => parseFloat(b.tipped) - parseFloat(a.tipped));
+            
+            const tippersHtml = tippers.map((t, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td class="wallet-addr">${t.wallet.slice(0, 6)}...${t.wallet.slice(-4)}</td>
+                    <td style="text-align: right;">${t.tipped}</td>
+                    <td style="text-align: right;">${t.cashback}</td>
+                </tr>
+            `).join('');
+            document.getElementById('topTippers').innerHTML = tippersHtml;
+            
+            const generous = Array.from({length: 8}, () => ({
+                wallet: generateWallet(),
+                ratio: (Math.random() * 0.05 + 0.01).toFixed(4),
+                score: (Math.random() * 1000 + 100).toFixed(1)
+            })).sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+            
+            const generousHtml = generous.map((g, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td class="wallet-addr">${g.wallet.slice(0, 6)}...${g.wallet.slice(-4)}</td>
+                    <td style="text-align: right;">${(parseFloat(g.ratio) * 100).toFixed(2)}%</td>
+                    <td style="text-align: right;">${g.score}</td>
+                </tr>
+            `).join('');
+            document.getElementById('mostGenerous').innerHTML = generousHtml;
+            
+            setTimeout(generateLeaderboards, 10000);
+        }
+
+        function addActivity(wallet, amount, cashback) {
+            const feed = document.getElementById('activityFeed');
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.textContent = `${wallet.slice(0, 6)}...${wallet.slice(-4)} → ${amount.toFixed(3)} → ${cashback}`;
+            
+            if (feed.firstChild && feed.firstChild.style) {
+                feed.firstChild.style.display = 'none';
+            }
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            while (feed.children.length > 20) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        function startActivityFeed() {
+            setInterval(() => {
+                const wallet = generateWallet();
+                const amount = (Math.random() * 0.5 + 0.01).toFixed(3);
+                const cashback = (parseFloat(amount) * (Math.random() * 0.02 + 0.01)).toFixed(6);
+                addActivity(wallet, amount, cashback);
+            }, 4000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
